@@ -13,6 +13,8 @@ class Country(db.Model):
     subregion = db.Column(db.Text)
     population = db.Column(db.BigInteger)
     flag = db.Column(db.Text)
+    languages = db.relationship('Language', secondary='country_language', backref='countries')
+    currencies = db.relationship('Currency', secondary='country_currency', backref='countries')
 
 class Bookmark(db.Model):
     __tablename__ = 'bookmarks'
@@ -52,7 +54,7 @@ class User(db.Model):
     username = db.Column(db.Text, nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
     email = db.Column(db.Text, nullable=False, unique=True)
-    bookmarks = db.relationship('Country', secondary='bookmarks')
+    bookmarks = db.relationship('Country', secondary='bookmarks', backref='users')
 
     @classmethod
     def signup(cls, username, password, email):

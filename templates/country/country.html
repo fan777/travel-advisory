@@ -1,0 +1,21 @@
+{% extends 'base.html' %}
+
+{% block content %}
+
+<img src="{{ country.flag }}" alt="Image for {{ country.name }}" id="country-flag">
+<p>{{ country.name }}</p>
+<p>{{ country.capital }}</p>
+<p>{{ country.region }}</p>
+<p>{{ country.subregion }}</p>
+<p>{{ country.population }}</p>
+<p>
+  {% for language in country.languages %}
+    {{ language.name }}<br />
+  {% endfor %}
+</p>
+<p>
+  {% for currency in country.currencies %}
+    {{ currency.name }}<br />
+  {% endfor %}
+</p>
+{% endblock %}

@@ -18,3 +18,8 @@ connect_db(app)
 def homepage():
     '''Show homepage.'''
     return render_template('index.html')
+
+@app.route('/country/<country_code>')
+def country(country_code):
+    country = Country.query.get_or_404(country_code)
+    return render_template('country/country.html', country=country)

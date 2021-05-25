@@ -77,11 +77,11 @@ if __name__ == '__main__':
     db.drop_all()
     db.create_all()
     seed_all()
-    # seed_one('AF')
-    # seed_one('US')
-    # seed_one('AU')
-    # seed_one('ZW')
-    # seed_one('MY')
-    # seed_one('VG')
-    # seed_one('NR')
-    # seed_one('PN')
+    # seed_one('US') # US and AU language (both eng)
+    # seed_one('AU') # US and AU language (both eng)
+    # seed_one('MY') # language code
+    # seed_one('AF') # multiple currencies
+    # seed_one('ZW') # null currencies
+    # seed_one('VG') # null currencies
+    # seed_one('NR') # null currencies
+    # seed_one('PN') # null currencies
