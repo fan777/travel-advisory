@@ -10,14 +10,38 @@
   <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
   <link rel="stylesheet" href="/static/stylesheets/style.css">
-
   <script src="https://unpkg.com/bootstrap"></script>
   <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
 </head>
 <body>
-  <nav class="navbar navbar-light bg-light">
-    <div class="container">
+  <nav class="navbar navbar-expand navbar-light bg-light">
+    <div class="container-fluid">
       <a class="navbar-brand" href="/">Travel Advisory</a>
+      <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
+        <span class="navbar-toggler-icon"></span>
+      </button>
+      <div class="collapse navbar-collapse" id="navbarText">
+        <ul class="navbar-nav me-auto mb-2 mb-lg-0">
+        </ul>
+        <form class="d-flex">
+          <input class="form-control" list="countryOptions" id="countryInput" placeholder="Country Name or Code" aria-label="Search">
+          <button class="btn btn-outline-success mx-2" id="countryBtn" type="submit">Go</button>
+          <datalist id="countryOptions">
+            {% for country in countries %}
+              <option value="{{ country.code }}" label="{{ country.name }}">
+            {% endfor %}
+          </datalist>
+        </form>
+        <ul class="navbar-nav navbar-right border">
+          {% if session['user_id'] %}
+          <li class="nav-item"><a class="nav-link" href="#">Welcome {{session['user_id']}}</a></li>
+          <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
+          {% else %}
+          <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
+          <li class="nav-item"><a class="nav-link" href="/register">Sign up</a></li>
+          {% endif %}
+        </ul>
+      </div>
     </div>
   </nav>
 
@@ -30,5 +54,7 @@
   {% endblock %}
   </div>
   
+  <script src="/static/travel.js"></script>
+
 </body>
 </html>

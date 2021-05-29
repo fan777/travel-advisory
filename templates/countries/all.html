@@ -1,7 +1,6 @@
 {% extends 'base.html' %}
 
 {% block content %}
-
   {% for regions in countries | groupby('region', default='N/A') %}
     <div class="row my-2">
       <h1 class="display-3">{{ regions.grouper }}</h1>

@@ -51,13 +51,13 @@ class CountryCurrency(db.Model):
 class User(db.Model):
     __tablename__ = 'users'
     id = db.Column(db.Integer, primary_key=True, autoincrement=True)
-    username = db.Column(db.Text, nullable=False, unique=True)
+    username = db.Column(db.String(20), nullable=False, unique=True)
     password = db.Column(db.Text, nullable=False)
-    email = db.Column(db.Text, nullable=False, unique=True)
+    email = db.Column(db.String(50), nullable=False)
     bookmarks = db.relationship('Country', secondary='bookmarks', backref='users')
 
     @classmethod
-    def signup(cls, username, password, email):
+    def register(cls, username, password, email):
         hashed_pwd = bcrypt.generate_password_hash(password).decode('UTF-8')
 
         user = User(
@@ -71,23 +71,12 @@ class User(db.Model):
 
     @classmethod
     def authenticate(cls, username, password):
-        """Find user with `username` and `password`.
+        user = User.query.filter_by(username=username).first()
 
-        This is a class method (call it on the class, not an individual user.)
-        It searches for a user whose password hash matches this password
-        and, if it finds such a user, returns that user object.
-
-        If can't find matching user (or if password is wrong), returns False.
-        """
-
-        user = cls.query.filter_by(username=username).first()
-
-        if user:
-            is_auth = bcrypt.check_password_hash(user.password, password)
-            if is_auth:
-                return user
-
-        return False
+        if user and bcrypt.check_password_hash(user.password, password):
+          return user
+        else:
+          return False
 
 def connect_db(app):
     db.app = app
