@@ -6,6 +6,7 @@ from flask import Flask, render_template, request, flash, redirect, session, g
 from models import db, connect_db, Country, Language, Currency, CountryCurrency, CountryLanguage, User
 from forms import RegisterForm, LoginForm
 from keyfile import API_SECRET_KEY_DETAIL_ADIVSORY
+
 from sqlalchemy.exc import IntegrityError
 from requests.exceptions import Timeout
 
@@ -32,16 +33,15 @@ requests_cache.install_cache(cache_name='travel_cache', backend='sqlite', expire
 
 @app.before_request
 def add_user_to_g():
-    g.countries = Country.query.filter(Country.region != '').all()
     """If we're logged in, add curr user to Flask global."""
     if CURR_USER_KEY in session:
         g.user = User.query.get(session[CURR_USER_KEY])
     else:
         g.user = None
 
-# @app.before_request
-# def add_countries_to_g():
-#     g.countries = Country.query.filter(Country.region != '').all()
+@app.before_request
+def add_countries_to_g():
+    g.countries = Country.query.filter(Country.region != '').all()
 
 def do_login(user):
     """Log in user."""
@@ -105,9 +105,7 @@ def logout():
 @app.route('/')
 def homepage():
     '''Show homepage.'''
-    # countries = Country.query.filter(Country.region != '').all()
-    # return render_template('countries/all.html', countries=countries)
-    return render_template('countries/all.html')
+    return render_template('countries/index.html')
 
 ######################################################
 # Country pages
