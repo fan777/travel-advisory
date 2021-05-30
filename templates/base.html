@@ -6,16 +6,15 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <title>Document</title>
 
-  <link rel="stylesheet" href="https://unpkg.com/bootstrap/dist/css/bootstrap.css">
-  <link rel="stylesheet" href="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.css">
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-+0n0xVW2eSR5OomGNYDnhzAbDsOXxcvSN1TPprVMTNDbiYZCxYbOOl7+AMvyTG2x" crossorigin="anonymous">
   <link rel="stylesheet" href="https://use.fontawesome.com/releases/v5.3.1/css/all.css">
   <link rel="stylesheet" href="/static/stylesheets/style.css">
-  <script src="https://unpkg.com/bootstrap"></script>
-  <script src="https://unpkg.com/bootstrap-table@1.18.3/dist/bootstrap-table.min.js"></script>
+  <script src="https://cdn.jsdelivr.net/npm/bootstrap@5.0.1/dist/js/bootstrap.bundle.min.js" integrity="sha384-gtEjrD/SeCtmISkJkNUaaKMoLD0//ElJ19smozuHV6z3Iehds+3Ulb9Bn9Plx0x4" crossorigin="anonymous"></script>
+  <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
 </head>
 <body>
   <nav class="navbar navbar-expand navbar-light bg-light">
-    <div class="container-fluid">
+    <div class="container">
       <a class="navbar-brand" href="/">Travel Advisory</a>
       <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarText" aria-controls="navbarText" aria-expanded="false" aria-label="Toggle navigation">
         <span class="navbar-toggler-icon"></span>
@@ -27,14 +26,14 @@
           <input class="form-control" list="countryOptions" id="countryInput" placeholder="Country Name or Code" aria-label="Search">
           <button class="btn btn-outline-success mx-2" id="countryBtn" type="submit">Go</button>
           <datalist id="countryOptions">
-            {% for country in countries %}
+            {% for country in g.countries %}
               <option value="{{ country.code }}" label="{{ country.name }}">
             {% endfor %}
           </datalist>
         </form>
         <ul class="navbar-nav navbar-right border">
-          {% if session['user_id'] %}
-          <li class="nav-item"><a class="nav-link" href="#">Welcome {{session['user_id']}}</a></li>
+          {% if g.user %}
+          <li class="nav-item"><a class="nav-link" href="#">Welcome {{ g.user.username }}</a></li>
           <li class="nav-item"><a class="nav-link" href="/logout">Logout</a></li>
           {% else %}
           <li class="nav-item"><a class="nav-link" href="/login">Login</a></li>
@@ -45,16 +44,16 @@
     </div>
   </nav>
 
-  <div class="container">
+  <div id="flash_messages" class="container mt-2">
     {% for category, message in get_flashed_messages(with_categories=True) %}
-  <div class="alert alert-{{ category }}">{{ message }}</div>
-  {% endfor %}
-
+    <div class="alert alert-{{ category }}">{{ message }}</div>
+    {% endfor %}
+  </div>
+  <div class="container mt-2">
   {% block content %}
   {% endblock %}
   </div>
-  
-  <script src="/static/travel.js"></script>
 
+  <script src="/static/travel.js"></script>
 </body>
 </html>

@@ -5,13 +5,15 @@ import requests_cache
 from flask import Flask, render_template, request, flash, redirect, session, g
 from models import db, connect_db, Country, Language, Currency, CountryCurrency, CountryLanguage, User
 from forms import RegisterForm, LoginForm
-from key_file import API_SECRET_KEY_DETAIL_ADIVSORY
+from keyfile import API_SECRET_KEY_DETAIL_ADIVSORY
 from sqlalchemy.exc import IntegrityError
 from requests.exceptions import Timeout
 
 API_BASE_URL_SIMPLE_ADVISORY = 'https://www.travel-advisory.info/api'
 API_BASE_URL_DETAIL_ADVISORY = 'https://api.tugo.com/v1/travelsafe'
 API_BASE_URL_COVID = 'https://disease.sh/v3/covid-19'
+
+CURR_USER_KEY = 'curr_user'
 
 app = Flask(__name__)
 
@@ -25,19 +27,119 @@ connect_db(app)
 
 requests_cache.install_cache(cache_name='travel_cache', backend='sqlite', expire_after=86400)
 
+######################################################
+# User signup / login / logout
+
+@app.before_request
+def add_user_to_g():
+    g.countries = Country.query.filter(Country.region != '').all()
+    """If we're logged in, add curr user to Flask global."""
+    if CURR_USER_KEY in session:
+        g.user = User.query.get(session[CURR_USER_KEY])
+    else:
+        g.user = None
+
+# @app.before_request
+# def add_countries_to_g():
+#     g.countries = Country.query.filter(Country.region != '').all()
+
+def do_login(user):
+    """Log in user."""
+    session[CURR_USER_KEY] = user.id
+
+def do_logout():
+    """Logout user."""
+    if CURR_USER_KEY in session:
+        del session[CURR_USER_KEY]
+
+@app.route('/register', methods=['GET', 'POST'])
+def register():
+    """Handle user signup.
+
+    Create new user and add to DB. Redirect to home page.
+
+    If form not valid, present form.
+
+    If the there already is a user with that username: flash message
+    and re-present form.
+    """
+    do_logout()
+    form = RegisterForm()
+    if form.validate_on_submit():
+        try:
+            user = User.register(form.username.data, form.password.data, form.email.data)
+            db.session.commit()
+        except IntegrityError:
+            flash("Username already taken", 'danger')
+            # form.username.errors.append('Username taken.  Please pick another')
+            return render_template('users/register.html', form=form)
+        do_login(user)
+        return redirect('/')
+    return render_template('users/register.html', form=form)
+
+@app.route('/login', methods=['GET', 'POST'])
+def login():
+    """Handle user login."""
+    form = LoginForm()
+    if form.validate_on_submit():
+        user = User.authenticate(form.username.data, form.password.data)
+        if user:
+            do_login(user)
+            flash(f"Hello, {user.username}!", "success")
+            return redirect('/')
+        else:
+            flash("Invalid credentials.", 'danger')
+            # form.username.errors = ['Invalid username/password.']
+    return render_template('users/login.html', form=form)
+
+@app.route('/logout')
+def logout():
+    """Handle logout of user."""
+    do_logout()
+    flash(f'Logged out!', 'success')
+    return redirect(request.referrer)
+
+######################################################
+# Homepage
+
 @app.route('/')
 def homepage():
     '''Show homepage.'''
-    countries = Country.query.filter(Country.region != '').all()
-    return render_template('countries/all.html', countries=countries)
+    # countries = Country.query.filter(Country.region != '').all()
+    # return render_template('countries/all.html', countries=countries)
+    return render_template('countries/all.html')
+
+######################################################
+# Country pages
 
 @app.route('/country/<country_code>')
 def country(country_code):
     country = Country.query.get_or_404(country_code)
     advisory = get_basic_advisory(country_code)
     covid = get_covid_stats(country_code)
+    graph = get_covid_graph_data(country_code)
     detailed = get_detailed_advisory(country_code)
-    return render_template('countries/single.html', country=country, advisory=advisory, covid=covid, detailed=detailed)
+    return render_template('countries/single.html', country=country, advisory=advisory, covid=covid, graph=graph, detailed=detailed)
+
+@app.route('/country/unbookmark/<country_code>', methods=['POST'])
+def unbookmark(country_code):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    bookmarked_country = Country.query.get_or_404(country_code)
+    g.user.bookmarks.remove(bookmarked_country)
+    db.session.commit()
+    return redirect(request.referrer)
+
+@app.route('/country/bookmark/<country_code>', methods=['POST'])
+def bookmark(country_code):
+    if not g.user:
+        flash("Access unauthorized.", "danger")
+        return redirect("/")
+    bookmarked_country = Country.query.get_or_404(country_code)
+    g.user.bookmarks.append(bookmarked_country)
+    db.session.commit()
+    return redirect(request.referrer)
 
 def get_basic_advisory(country_code):
     url = f'{API_BASE_URL_SIMPLE_ADVISORY}'
@@ -74,6 +176,24 @@ def get_covid_stats(country_code):
         ('error', 'Statistics for this country not found.')
       ])
 
+def get_covid_graph_data (country_code):
+    url = f'{API_BASE_URL_COVID}/historical/{country_code}?lastdays=30'
+    try:
+      response = requests.get(url)
+      data = response.json()
+      if response.status_code == 404:
+        raise Exception()
+      values = data.get('timeline').get('cases').values()
+      labels = data.get('timeline').get('cases').keys()
+      return dict([
+        ('values', list(values)),
+        ('labels', list(labels))
+      ])
+    except:
+      return dict([
+        ('error', 'Graph data for this country could not be computed.')
+      ])
+
 def get_detailed_advisory(country_code):
     url = f'{API_BASE_URL_DETAIL_ADVISORY}/countries/{country_code}'
     try:
@@ -93,53 +213,3 @@ def get_detailed_advisory(country_code):
       return dict([
         ('error', 'Additional considerations for this country not found.')
       ])
-
-@app.route('/register', methods=['GET', 'POST'])
-def register_user():
-    form = RegisterForm()
-    if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        email = form.email.data
-        new_user = User.register(username, password, email)
-        db.session.add(new_user)
-        try:
-            db.session.commit()
-        except IntegrityError:
-            form.username.errors.append('Username taken.  Pelase pick another')
-            return render_template('users/register.html', form=form)
-        session['user_id'] = new_user.username
-        return redirect(f'/')
-    return render_template('users/register.html', form=form)
-
-@app.route('/login', methods=['GET', 'POST'])
-def login_user():
-    if 'user_id' in session:
-        return redirect(f"/")
-    form = LoginForm()
-    if form.validate_on_submit():
-        username = form.username.data
-        password = form.password.data
-        user = User.authenticate(username, password)
-        if user:
-            session['user_id'] = user.username
-            return redirect(f'/')
-        else:
-            form.username.errors = ['Invalid username/password.']
-    return render_template('users/login.html', form=form)
-
-@app.route('/users/<username>/delete', methods=['GET', 'POST'])
-def delete_user(username):
-    if 'user_id' not in session or username != session['user_id']:
-        return redirect('/login')
-
-    user = User.query.get_or_404(username)
-    db.session.delete(user)
-    db.session.commit()
-    session.pop('user_id')
-    return redirect('/login')
-
-@app.route('/logout')
-def logout_user():
-    session.pop('user_id')
-    return redirect('/')

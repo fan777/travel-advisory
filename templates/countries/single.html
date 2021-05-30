@@ -4,6 +4,18 @@
 
 <div class="row my-2">
   <h1 class="display-3">{{ country.name }}</h1>
+  {% if g.user %}
+    {% if country in g.user.bookmarks %}
+      <form method="POST" action="/country/unbookmark/{{ country.code }}">
+        <button class="btn btn-primary btn-sm">Remove Bookmark</button>
+      </form>
+    {% else %}
+      <form method="POST" action="/country/bookmark/{{ country.code }}">
+        <button class="btn btn-outline-primary btn-sm">Add Bookmark</button>
+      </form>
+    {% endif %}
+  {% endif %}
+  
   <div class="col-md-4">
     
     <div class="card mb-4">
@@ -69,32 +81,69 @@
     </p>
     
     <h3>COVID Statistics</h3>
-    <p>
+    <div class="row">
+      <p>
       {% if covid.error %}
         {{ covid.error }}
       {% else %}
-        <div class="row">
-          <div class="col-3 fw-bold">Currently Active</div>
-          <div class="col-3">{{ "{:,}".format(covid.active) }}</div>
+        <div class="col-4">
+          <div class="row">
+            <div class="col-6 fw-bold">Active</div>
+            <div class="col-6">{{ "{:,}".format(covid.active) }}</div>
+          </div>
+          <div class="row">
+            <div class="col-6 fw-bold">Critical</div>
+            <div class="col-6">{{ "{:,}".format(covid.critical) }}</div>
+          </div>
+          <div class="row">
+            <div class="col-6 fw-bold">Total Deaths</div>
+            <div class="col-6">{{ "{:,}".format(covid.deaths) }}</div>
+          </div>
+          <div class="row">
+            <div class="col-6 fw-bold">Total Recovered</div>
+            <div class="col-3">{{ "{:,}".format(covid.recovered) }}</div>
+          </div>
+          <div class="row">
+            <div class="col-6 fw-bold">Total Cases</div>
+            <div class="col-6">{{ "{:,}".format(covid.cases) }}</div>
+          </div>
         </div>
-        <div class="row">
-          <div class="col-3 fw-bold">Currently Critical</div>
-          <div class="col-3">{{ "{:,}".format(covid.critical) }}</div>
+        <div class="col-8">
+          <canvas id="covidChart" class="img-responsive"></canvas>
+          <script>
+            let ctx = document.getElementById('covidChart').getContext('2d');
+            let covidChart = new Chart(ctx, {
+              type: 'line',
+              data: {
+                  labels: {{ graph['labels'] |tojson }},
+                  datasets: [{
+                      label: 'Total cases over 30 days',
+                      data: {{ graph['values'] |tojson }},
+                      borderColor: [
+                          'rgba(255, 99, 132, 1)',
+                      ],
+                      backgroundColor: [
+                          'rgba(255, 99, 132, 0.2)',
+                      ],
+                      borderWidth: 0.5
+                  }]
+              },
+              options: {
+                  scales: {
+                      yAxes: [{
+                          ticks: {
+                              beginAtZero: true
+                          }
+                      }]
+                  }
+              }
+            });
+          </script>
         </div>
-        <div class="row">
-          <div class="col-3 fw-bold">Total Deaths</div>
-          <div class="col-3">{{ "{:,}".format(covid.deaths) }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3 fw-bold">Total Recovered</div>
-          <div class="col-3">{{ "{:,}".format(covid.recovered) }}</div>
-        </div>
-        <div class="row">
-          <div class="col-3 fw-bold">Total Cases</div>
-          <div class="col-3">{{ "{:,}".format(covid.cases) }}</div>
-        </div>
+      
         <small class="fst-italic">[source: <a href="https://disease.sh">disease.sh</a>]</small>
       {% endif %}
+    </div>
     </p>
     
     <h3>Additional Considerations</h3>
