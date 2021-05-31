@@ -2,29 +2,41 @@
 
 {% block content %}
   {% if g.user %}
-    <div class="row my-2">
-      <h1 class="display-3">Bookmarks</h1>
-      {% for column in g.user.bookmarks | sort(attribute='name') | slice(3) %}
-        <div class="col-md">
-          {% for country in column %}
-            <a href="country/{{ country.code }}">{{ country.name }}</a> <br />
-          {% endfor %}
+    <div class="card my-3">
+      <div class="card-header">Bookmarks</div>
+      <div class="card-body">
+        <div class="row">
+          {% for column in g.user.bookmarks | sort(attribute='name') | slice(3) %}
+          <div class="col-md">
+            {% for country in column %}
+              <a href="country/{{ country.code }}">{{ country.name }}</a> <br />
+            {% endfor %}
+          </div>
+          {% endfor %}    
         </div>
-      {% endfor %}    
+      </div>
     </div>
   {% endif %}
 
   {% for regions in g.countries | groupby('region', default='N/A') %}
-    <div class="row my-2">
-      <h1 class="display-3">{{ regions.grouper }}</h1>
-      {% for column in regions.list | sort(attribute='name') | slice(3) %}
-        <div class="col-md">
-          {% for country in column %}
-            <a href="country/{{ country.code }}">{{ country.name }}</a> <br />
-          {% endfor %}
-        </div>
-      {% endfor %}    
+  <div class="card my-3">
+    <div class="card-header">{{ regions.grouper }}</div>
+    <div class="card-body">
+      
+      <div class="row">
+        {% for column in regions.list | sort(attribute='name') | slice(3) %}
+          <div class="col-md">
+            {% for country in column %}
+              <a href="country/{{ country.code }}">{{ country.name }}</a> <br />
+            {% endfor %}
+          </div>
+        {% endfor %}    
+      </div>
+
     </div>
+  </div>
+
+    
   {% endfor %}
 
 {% endblock %}

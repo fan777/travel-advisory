@@ -3,7 +3,7 @@
 {% block content %}
 
 <div class="row my-2">
-  <h1 class="display-3">{{ country.name }}</h1>
+  <h1 class="display-3">{% block title %} {{ country.name }} {% endblock %}</h1>
   {% if g.user %}
     {% if country in g.user.bookmarks %}
       <form method="POST" action="/country/unbookmark/{{ country.code }}">
