@@ -19,6 +19,7 @@ MarkupSafe==2.0.1
 psycopg2-binary==2.8.6
 pycodestyle==2.7.0
 pycparser==2.20
+python-dotenv==0.17.1
 requests==2.25.1
 requests-cache==0.6.3
 six==1.16.0

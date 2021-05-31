@@ -3,29 +3,24 @@ import requests
 import requests_cache
 
 from flask import Flask, render_template, request, flash, redirect, session, g
-from models import db, connect_db, Country, Language, Currency, CountryCurrency, CountryLanguage, User
-from forms import RegisterForm, LoginForm
-from keyfile import API_SECRET_KEY_DETAIL_ADIVSORY
-
+from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from requests.exceptions import Timeout
 
-API_BASE_URL_SIMPLE_ADVISORY = 'https://www.travel-advisory.info/api'
-API_BASE_URL_DETAIL_ADVISORY = 'https://api.tugo.com/v1/travelsafe'
-API_BASE_URL_COVID = 'https://disease.sh/v3/covid-19'
+from models import db, connect_db, Country, Language, Currency, CountryCurrency, CountryLanguage, User
+from forms import RegisterForm, LoginForm
 
+API_BASE_URL_TA = 'https://www.travel-advisory.info/api'
+API_BASE_URL_COVID = 'https://disease.sh/v3/covid-19'
+API_BASE_URL_TUGO = 'https://api.tugo.com/v1/travelsafe'
+API_SECRET_KEY_TUGO = os.environ.get('TUGO_SECRET_KEY')
 CURR_USER_KEY = 'curr_user'
 
 app = Flask(__name__)
-
-app.config['SQLALCHEMY_DATABASE_URI'] = (os.environ.get('DATABASE_URL', 'postgresql:///travel'))
-app.config['SQLALCHEMY_TRACK_MODIFICATIONS'] = False
-app.config['SQLALCHEMY_ECHO'] = False
-app.config['DEBUG_TB_INTERCEPT_REDIRECTS'] = False
-app.config['SECRET_KEY'] = os.environ.get('SECRET_KEY', "tangobananaredchopper")
+app.config.from_pyfile('config.py')
 
 connect_db(app)
-
+toolbar = DebugToolbarExtension(app)
 requests_cache.install_cache(cache_name='travel_cache', backend='sqlite', expire_after=86400)
 
 ######################################################
@@ -140,7 +135,7 @@ def bookmark(country_code):
     return redirect(request.referrer)
 
 def get_basic_advisory(country_code):
-    url = f'{API_BASE_URL_SIMPLE_ADVISORY}'
+    url = f'{API_BASE_URL_TA}'
     try:
       response = requests.get(url, params={'countrycode': country_code})
       data = response.json().get('data').get(country_code).get('advisory')
@@ -193,9 +188,9 @@ def get_covid_graph_data (country_code):
       ])
 
 def get_detailed_advisory(country_code):
-    url = f'{API_BASE_URL_DETAIL_ADVISORY}/countries/{country_code}'
+    url = f'{API_BASE_URL_TUGO}/countries/{country_code}'
     try:
-      headers = {'X-Auth-API-Key': API_SECRET_KEY_DETAIL_ADIVSORY}
+      headers = {'X-Auth-API-Key': API_SECRET_KEY_TUGO}
       response = requests.get(url, headers=headers, timeout=10)
       data = response.json()
       return dict([
