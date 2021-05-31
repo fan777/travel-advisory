@@ -91,14 +91,10 @@ def logout():
 @app.route('/')
 def homepage():
     '''Show homepage.'''
-    return redirect('/country')
+    return render_template('country/list.html')
 
 ######################################################
 # Country list / single / bookmark
-
-@app.route('/country')
-def countries():
-    return render_template('country/list.html')
 
 @app.route('/country/<country_code>')
 def country(country_code):
