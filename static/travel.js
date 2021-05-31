@@ -5,7 +5,6 @@ document.querySelector('#countryBtn').addEventListener("click", function (evt) {
   let value = document.querySelector('#countryInput').value;
   let options = Array.from(document.querySelectorAll('#countryOptions option'));
   let valid = options.map(item => item.value);
-  //let valid = Array.from(document.querySelectorAll('#countryOptions option')).map(item => item.value);
   console.log(valid);
   if (!value) {
     document.querySelector('#flash_messages').innerHTML =
@@ -16,6 +15,5 @@ document.querySelector('#countryBtn').addEventListener("click", function (evt) {
   } else {
     window.location.href = `/country/${value}`;
   }
-
 });
 

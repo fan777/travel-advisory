@@ -1,0 +1,49 @@
+<div class="card mb-4">
+  <img src="{{ country.flag }}" class="img-fluid" alt="Image for {{ country.name }}" id="country-flag">
+  <ul class="list-group list-group-flush">
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col fw-bold">Capital</div>
+        <div class="col">{{ country.capital }}</div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col fw-bold">Region</div>
+        <div class="col">{{ country.region }}</div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col fw-bold">Subregion</div>
+        <div class="col">{{ country.subregion }}</div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col fw-bold">Population</div>
+        <div class="col">{{ "{:,}".format(country.population) }}</div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col fw-bold">Languages</div>
+        <div class="col">
+          {% for language in country.languages %}
+            {{ language.name }}{{ ", " if not loop.last else "" }}
+          {% endfor %}
+        </div>
+      </div>
+    </li>
+    <li class="list-group-item">
+      <div class="row">
+        <div class="col fw-bold">Currencies</div>
+        <div class="col">
+          {% for currency in country.currencies %}
+            {{ currency.name }} {{ ", " if not loop.last else "" }}
+          {% endfor %}
+        </div>
+      </div>          
+    </li>
+  </ul>      
+</div>

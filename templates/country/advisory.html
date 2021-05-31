@@ -1,0 +1,9 @@
+<h3>General Advisory</h3>
+<p>
+  {% if advisory.error %}
+    {{ advisory.error }}
+  {% else %}
+    {{ advisory.message }} <br/>
+    <small class="fst-italic">[source: <a href="{{ advisory.source}}">travel-adivsory.info</a>]</small>
+  {% endif %}
+</p>

@@ -36,7 +36,6 @@ def add_user_to_g():
 
 @app.before_request
 def add_countries_to_g():
-    # g.countries = Country.query.filter(Country.region != '').all()
     g.countries = Country.query.all()
 
 def do_login(user):
@@ -50,15 +49,7 @@ def do_logout():
 
 @app.route('/register', methods=['GET', 'POST'])
 def register():
-    """Handle user signup.
-
-    Create new user and add to DB. Redirect to home page.
-
-    If form not valid, present form.
-
-    If the there already is a user with that username: flash message
-    and re-present form.
-    """
+    """Handle user signup."""
     do_logout()
     form = RegisterForm()
     if form.validate_on_submit():
@@ -67,9 +58,9 @@ def register():
             db.session.commit()
         except IntegrityError:
             flash("Username already taken", 'danger')
-            # form.username.errors.append('Username taken.  Please pick another')
             return render_template('users/register.html', form=form)
         do_login(user)
+        flash("Account created!", 'success')
         return redirect('/')
     return render_template('users/register.html', form=form)
 
@@ -85,7 +76,6 @@ def login():
             return redirect('/')
         else:
             flash("Invalid credentials.", 'danger')
-            # form.username.errors = ['Invalid username/password.']
     return render_template('users/login.html', form=form)
 
 @app.route('/logout')
@@ -101,12 +91,12 @@ def logout():
 @app.route('/')
 def homepage():
     '''Show homepage.'''
-    return redirect('/country/list')
+    return redirect('/countries')
 
 ######################################################
-# Country pages
+# Country list / single / bookmark
 
-@app.route('/country/list')
+@app.route('/countries')
 def countries():
     return render_template('country/list.html')
 
@@ -138,6 +128,9 @@ def bookmark(country_code):
     g.user.bookmarks.append(bookmarked_country)
     db.session.commit()
     return redirect(request.referrer)
+
+######################################################
+# API calls
 
 def get_basic_advisory(country_code):
     url = f'{API_BASE_URL_TA}'

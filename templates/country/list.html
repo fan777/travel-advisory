@@ -1,7 +1,7 @@
 {% extends 'base.html' %}
 
 {% block content %}
-  {% if g.user %}
+  {% if g.user.bookmarks %}
     <div class="card my-3">
       <div class="card-header">Bookmarks</div>
       <div class="card-body">
@@ -20,8 +20,8 @@
 
   {% for regions in g.countries | groupby('region') %}
   <div class="card my-3">
+    <div class="card-header">{{ regions.grouper }}</div>
     <div class="card-body">
-      <h3 class="card-title">{{ regions.grouper }}</h3>
       <div class="row">
         {% for column in regions.list | sort(attribute='name') | slice(3) %}
           <div class="col-md">
@@ -31,11 +31,7 @@
           </div>
         {% endfor %}    
       </div>
-
     </div>
-  </div>
-
-    
+  </div>    
   {% endfor %}
-
 {% endblock %}
