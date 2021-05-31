@@ -146,13 +146,17 @@ def page_not_found(e):
 def get_basic_advisory(country_code):
     url = f'{API_BASE_URL_TA}'
     try:
-      response = requests.get(url, params={'countrycode': country_code})
+      response = requests.get(url, timeout=10, params={'countrycode': country_code})
       data = response.json().get('data').get(country_code).get('advisory')
       return dict([
         ('score', data.get('score')),
         ('message', data.get('message')),
         ('updated', data.get('updated')),
         ('source', data.get('source'))
+      ])
+    except Timeout as ex:
+      return dict([
+        ('error', 'API service timed out.')
       ])
     except:
       return dict([
@@ -162,7 +166,7 @@ def get_basic_advisory(country_code):
 def get_covid_stats(country_code):
     url = f'{API_BASE_URL_COVID}/countries/{country_code}'
     try:
-      response = requests.get(url)
+      response = requests.get(url, timeout=10)
       data = response.json()
       if response.status_code == 404:
         raise Exception()
@@ -173,6 +177,10 @@ def get_covid_stats(country_code):
         ('active', data.get('active')),
         ('critical', data.get('critical'))
       ])
+    except Timeout as ex:
+      return dict([
+        ('error', 'API service timed out.')
+      ])
     except:
       return dict([
         ('error', 'Statistics for this country not found.')
@@ -181,7 +189,7 @@ def get_covid_stats(country_code):
 def get_covid_graph_data (country_code):
     url = f'{API_BASE_URL_COVID}/historical/{country_code}?lastdays=182'
     try:
-      response = requests.get(url)
+      response = requests.get(url, timeout=10)
       data = response.json()
       if response.status_code == 404:
         raise Exception()
@@ -190,6 +198,10 @@ def get_covid_graph_data (country_code):
       return dict([
         ('data', list(values)),
         ('labels', list(keys))
+      ])
+    except Timeout as ex:
+      return dict([
+        ('error', 'API service timed out.')
       ])
     except:
       return dict([
