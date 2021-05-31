@@ -91,23 +91,26 @@ def logout():
 @app.route('/')
 def homepage():
     '''Show homepage.'''
-    return redirect('/countries')
+    return redirect('/country')
 
 ######################################################
 # Country list / single / bookmark
 
-@app.route('/countries')
+@app.route('/country')
 def countries():
     return render_template('country/list.html')
 
 @app.route('/country/<country_code>')
 def country(country_code):
-    country = Country.query.get_or_404(country_code)
+    if not [country for country in g.countries if country.code == country_code]:
+      flash(f'{country_code} is an invalid country code', 'danger')
+      return redirect('/')
+    country = Country.query.get(country_code)
     advisory = get_basic_advisory(country_code)
     covid = get_covid_stats(country_code)
     graph = get_covid_graph_data(country_code)
     detailed = get_detailed_advisory(country_code)
-    return render_template('country/country.html', country=country, advisory=advisory, covid=covid, graph=graph, detailed=detailed)
+    return render_template('country/country.html', country=country, advisory=advisory, covid=covid, graph=graph, detailed=detailed)  
 
 @app.route('/country/unbookmark/<country_code>', methods=['POST'])
 def unbookmark(country_code):
@@ -128,6 +131,14 @@ def bookmark(country_code):
     g.user.bookmarks.append(bookmarked_country)
     db.session.commit()
     return redirect(request.referrer)
+
+######################################################
+# Additional routes
+
+@app.errorhandler(404)
+def page_not_found(e):
+    flash("404 error! Page or route not found.", "danger")
+    return redirect('/')
 
 ######################################################
 # API calls
