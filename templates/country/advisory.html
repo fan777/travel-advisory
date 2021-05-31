@@ -10,10 +10,6 @@
     {% endif %}
   </div>
   <div class="card-footer">
-    {% if advisory.error %}
-      &nbsp;
-    {% else %}
-      <small class="fst-italic">source: <a href="{{ advisory.source}}">travel-adivsory.info</a>, updated: {{ advisory.updated }}</small>
-    {% endif %}
+    <small class="fst-italic">source: <a href="{{ advisory.source}}">travel-adivsory.info</a>, updated: {{ advisory.updated }}</small>
   </div>
 </div>
