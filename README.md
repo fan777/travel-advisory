@@ -73,4 +73,6 @@ Global travel is not without perils.  This project aggregates data from a variet
 
 ## Future Considerations
 
-Since this project relies on so many external APIs with limited or inconsistent behavior, it may be worthwhile exercise to scrape government sites (from US state department and CIA world factbook) to generate one's own set of data.
+Chart.js is useful and powerful however my implementation is kludging Javascript into HTML with Jinja variables.  To separate responsibilities, the script can be offloaded as a function in a JS file and the canvas can call the function on load, passing in the data as variables.  
+
+Finally, since this project relies on so many external APIs with limited or inconsistent behavior, it may be worthwhile exercise to develop a scraper and gather the data directly from government sites (US state department, CIA world factbook, etc) to generate one's own set of data.
