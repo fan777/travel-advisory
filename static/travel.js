@@ -16,4 +16,3 @@ document.querySelector('#countryBtn').addEventListener("click", function (evt) {
     window.location.href = `/country/${value}`;
   }
 });
-

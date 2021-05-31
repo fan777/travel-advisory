@@ -1,32 +1,11 @@
-<h3>COVID Statistics</h3>
-<div class="row">
-  <p>
-  {% if covid.error %}
-    {{ covid.error }}
-  {% else %}
-    <div class="col-4">
-      <div class="row">
-        <div class="col-6 fw-bold">Active</div>
-        <div class="col-6">{{ "{:,}".format(covid.active) }}</div>
-      </div>
-      <div class="row">
-        <div class="col-6 fw-bold">Critical</div>
-        <div class="col-6">{{ "{:,}".format(covid.critical) }}</div>
-      </div>
-      <div class="row">
-        <div class="col-6 fw-bold">Total Deaths</div>
-        <div class="col-6">{{ "{:,}".format(covid.deaths) }}</div>
-      </div>
-      <div class="row">
-        <div class="col-6 fw-bold">Total Recovered</div>
-        <div class="col-3">{{ "{:,}".format(covid.recovered) }}</div>
-      </div>
-      <div class="row">
-        <div class="col-6 fw-bold">Total Cases</div>
-        <div class="col-6">{{ "{:,}".format(covid.cases) }}</div>
-      </div>
-    </div>
-    <div class="col-8">
+<div class="card my-3">
+  <div class="card-header">
+    COVID
+  </div>
+  <div class="card-body">
+    {% if covid.error %}
+      {{ covid.error }}
+    {% else %}
       {% if graph.error %}
         {{ graph.error }}
       {% else %}
@@ -39,7 +18,7 @@
                 labels: {{ graph['labels'] |tojson }},
                 datasets: [{
                     label: 'Total cases over 30 days',
-                    data: {{ graph['values'] |tojson }},
+                    data: {{ graph['data'] |tojson }},
                     borderColor: [
                         'rgba(255, 99, 132, 1)',
                     ],
@@ -61,9 +40,45 @@
           });
         </script>
       {% endif %}
-    </div>
-  
-    <small class="fst-italic">[source: <a href="https://disease.sh">disease.sh</a>]</small>
-  {% endif %}
-  </p>
+      <ul class="list-group list-group-flush mt-2">
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 col-lg-4 fw-bold">Active</div>
+            <div class="col-sm-6 col-lg-8">{{ "{:,}".format(covid.active) }}</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 col-lg-4 fw-bold">Critical</div>
+            <div class="col-sm-6 col-lg-8">{{ "{:,}".format(covid.critical) }}</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 col-lg-4 fw-bold">Total Deaths</div>
+            <div class="col-sm-6 col-lg-8">{{ "{:,}".format(covid.deaths) }}</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 col-lg-4 fw-bold">Total Recovered</div>
+            <div class="col-sm-6 col-lg-8">{{ "{:,}".format(covid.recovered) }}</div>
+          </div>
+        </li>
+        <li class="list-group-item">
+          <div class="row">
+            <div class="col-sm-6 col-lg-4 fw-bold">Total Cases</div>
+            <div class="col-sm-6 col-lg-8">{{ "{:,}".format(covid.cases) }}</div>
+          </div>
+        </li>
+      </ul>
+    {% endif %}
+  </div>
+  <div class="card-footer">
+    {% if advisory.error %}
+      &nbsp;
+    {% else %}
+      <small class="fst-italic">source: <a href="https://disease.sh">disease.sh</a></small>
+    {% endif %}
+  </div>
 </div>

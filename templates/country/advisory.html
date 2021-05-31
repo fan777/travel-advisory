@@ -1,9 +1,19 @@
-<h3>General Advisory</h3>
-<p>
-  {% if advisory.error %}
-    {{ advisory.error }}
-  {% else %}
-    {{ advisory.message }} <br/>
-    <small class="fst-italic">[source: <a href="{{ advisory.source}}">travel-adivsory.info</a>]</small>
-  {% endif %}
-</p>
+<div class="card mb-3">
+  <div class="card-header">
+    Advisory Level
+  </div>
+  <div class="card-body">
+    {% if advisory.error %}
+      {{ advisory.error }}
+    {% else %}
+      {{ advisory.message }}
+    {% endif %}
+  </div>
+  <div class="card-footer">
+    {% if advisory.error %}
+      &nbsp;
+    {% else %}
+      <small class="fst-italic">source: <a href="{{ advisory.source}}">travel-adivsory.info</a>, updated: {{ advisory.updated }}</small>
+    {% endif %}
+  </div>
+</div>

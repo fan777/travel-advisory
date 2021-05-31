@@ -2,30 +2,30 @@
 
 {% block content %}
 
-<div class="row my-2">
-  <h1 class="display-3">{% block title %} {{ country.name }} {% endblock %}</h1>
+
+<h1 class="display-4">{% block title %} {{ country.name }} {% endblock %}</h1>
+<div id="bookmark">
   {% if g.user %}
     {% if country in g.user.bookmarks %}
       <form method="POST" action="/country/unbookmark/{{ country.code }}">
-        <button class="btn btn-primary btn-sm">Remove Bookmark</button>
+        <button class="btn btn-primary btn-sm">Remove from Bookmark</button>
       </form>
     {% else %}
       <form method="POST" action="/country/bookmark/{{ country.code }}">
-        <button class="btn btn-outline-primary btn-sm">Add Bookmark</button>
+        <button class="btn btn-outline-primary btn-sm">Add to Bookmark</button>
       </form>
     {% endif %}
   {% endif %}
-  
+</div>
+
+<div class="row my-2">  
   <div class="col-md-4">
     {% include 'country/info.html' %}
   </div>
-  
   <div class="col-md-8">
     {% include 'country/advisory.html' %}
-    
     {% include 'country/covid.html' %}
     {% include 'country/considerations.html' %}
-
   </div>
 </div>
 

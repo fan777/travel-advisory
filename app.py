@@ -107,7 +107,7 @@ def country(country_code):
     covid = get_covid_stats(country_code)
     graph = get_covid_graph_data(country_code)
     detailed = get_detailed_advisory(country_code)
-    return render_template('country/single.html', country=country, advisory=advisory, covid=covid, graph=graph, detailed=detailed)
+    return render_template('country/country.html', country=country, advisory=advisory, covid=covid, graph=graph, detailed=detailed)
 
 @app.route('/country/unbookmark/<country_code>', methods=['POST'])
 def unbookmark(country_code):
@@ -175,10 +175,10 @@ def get_covid_graph_data (country_code):
       if response.status_code == 404:
         raise Exception()
       values = data.get('timeline').get('cases').values()
-      labels = data.get('timeline').get('cases').keys()
+      keys = data.get('timeline').get('cases').keys()
       return dict([
-        ('values', list(values)),
-        ('labels', list(labels))
+        ('data', list(values)),
+        ('labels', list(keys))
       ])
     except:
       return dict([
