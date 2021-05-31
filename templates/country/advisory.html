@@ -10,6 +10,6 @@
     {% endif %}
   </div>
   <div class="card-footer">
-    <small class="fst-italic">source: <a href="{{ advisory.source}}">travel-adivsory.info</a>, updated: {{ advisory.updated }}</small>
+    <small class="fst-italic">source: <a href="https://www.travel-advisory.info/">travel-adivsory.info</a>, updated: {{ advisory.updated | default('n/a', true) }}</small>
   </div>
 </div>
