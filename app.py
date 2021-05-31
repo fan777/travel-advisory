@@ -146,7 +146,7 @@ def page_not_found(e):
 def get_basic_advisory(country_code):
     url = f'{API_BASE_URL_TA}'
     try:
-      response = requests.get(url, timeout=10, params={'countrycode': country_code})
+      response = requests.get(url, timeout=5, params={'countrycode': country_code})
       data = response.json().get('data').get(country_code).get('advisory')
       return dict([
         ('score', data.get('score')),
