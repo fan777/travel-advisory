@@ -168,7 +168,7 @@ def get_covid_stats(country_code):
       ])
 
 def get_covid_graph_data (country_code):
-    url = f'{API_BASE_URL_COVID}/historical/{country_code}?lastdays=30'
+    url = f'{API_BASE_URL_COVID}/historical/{country_code}?lastdays=182'
     try:
       response = requests.get(url)
       data = response.json()

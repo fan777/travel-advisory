@@ -1,8 +1,14 @@
+# Capstone-1
+
 # Travel Advisory
 
-This app aggregates country data and provides advisory information (including COVID statistics) to help with travel planning.
+## Table of Contents
+1. [About The Project](#about-the-project)
+2. [Objectives](#objectives)
 
----
+## About The Project
+
+As of mid-2021, global travel is still fraught with uncertainty.  This project aggregates data from freely available APIs in order to construct a cohesive site presenting useful travel information including COVID trends and other 
 
 ## Objectives
 

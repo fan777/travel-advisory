@@ -1,70 +1,77 @@
-<div class="card my-3">
-  <div class="card-header">
-    Further Considerations
-  </div>
-  <div class="card-body">
-    {% if detailed.error %}
-      {{ detailed.error }}
-    {% else %}
-    <ul class="list-group list-group-flush">
-      <li class="list-group-item">
-        <h4 class="card-title">Climate</h4>
-        {% if not detailed.climate.description and not detailed.climate.climateInfo %}
-          <p>No climate information.</p>
-        {% else %}
-          {% if detailed.climate.description %}
-            <p>{{ detailed.climate.description }}</p>
-          {% endif %}
-          {% for idx in detailed.climate.climateInfo %}
-            <h5 class="card-title">{{ idx.category }}</h5>
-            <p>{{ idx.description }}</p>
-          {% endfor %}
-        {% endif %}
-      </li>
-      <li class="list-group-item">
-        <h4 class="card-title">Health</h4>
-        {% if not detailed.health.description and not detailed.health.diseasesAndVaccinesInfo or not detailed.health.healthInfo %}
-          <p>No health information.</p>
-        {% else %}
-          {% if detailed.health.description %}
-            <p>{{ detailed.health.description }}</p>
-          {% endif %}
-          {% for idx in detailed.health.diseasesAndVaccinesInfo %}
-            <h5 class="card-title">{{ idx }}</h5>
-              {% for idx2 in detailed.health.diseasesAndVaccinesInfo[idx] %}
-                <h6 class="card-title">{{ idx2.category }}</h6>
-                <p>{{ idx2.description }}</p>
-              {% endfor %}
-          {% endfor %}
-        {% endif %}
-      </li>
-      <li class="list-group-item">
-        <h4 class="card-title">Law and Culture</h4>
-        {% if not detailed.lawAndCulture.description and not detailed.lawAndCulture.lawAndCultureInfo %}
-          <p>No law and culture infomration.</p>
-        {% else %}
-          {% if detailed.lawAndCulture.description %}
-            <p>{{ detailed.lawAndCulture.description }}</p>
-          {% endif %}
-          {% for idx in detailed.lawAndCulture.lawAndCultureInfo %}
-            <h5 class="card-title">{{ idx.category }}</h5>
-            <p>{{ idx.description }}</p>
-          {% endfor %}
-        {% endif %}
-      </li>
-    </ul>
-    {% endif %}
-  </div>
-  <div class="card-footer">
-    {% if detailed.error %}
-      &nbsp;
-    {% else %}
+{% if detailed.error %}
+  <div class="card my-3">
+    <div class="card-body">{{ detailed.error }}</div>
+    <div class="card-footer">
       <small class="fst-italic">source: <a href="https://developer.tugo.com/page/Travel_Safe_API">tugo</a> @ Canadian Embassy</small>
-    {% endif %}
+    </div>
   </div>
-</div>
+{% else %}
+  {% if detailed.climate.description or detailed.climate.climateInfo %}
+  <div class="card my-3">
+    <div class="card-header">Climate</div>
+    {% if detailed.climate.description %}
+      <div class="card-body">{{ detailed.climate.description }}</div>
+    {% endif %}
+    {% if detailed.climate.climateInfo %}
+      <ul class="list-group list-group-flush">
+        {% for idx in detailed.climate.climateInfo %}
+          <li class="list-group-item">
+            <h5 class="card-title">{{ idx.category }}</h5>
+            <p>{{ idx.description }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <div class="card-footer">
+      <small class="fst-italic">source: <a href="https://developer.tugo.com/page/Travel_Safe_API">tugo</a> @ Canadian Embassy</small>
+    </div>
+  </div>
+  {% endif %}
 
+  {% if detailed.health.description or detailed.health.diseasesAndVaccinesInfo or detailed.health.healthInfo %}
+  <div class="card my-3">
+    <div class="card-header">Health</div>
+    {% if detailed.health.description %}
+      <div class="card-body">{{ detailed.health.description }}</div>
+    {% endif %}
+    {% if detailed.health.diseasesAndVaccinesInfo %}
+      <ul class="list-group list-group-flush">
+        {% for idx in detailed.health.diseasesAndVaccinesInfo %}
+          <li class="list-group-item">
+            <h5 class="card-title">{{ idx }}</h5>
+            {% for idx2 in detailed.health.diseasesAndVaccinesInfo[idx] %}
+              <h6 class="card-title text-decoration-underline">{{ idx2.category }}</h6>
+              <p>{{ idx2.description }}</p>
+            {% endfor %}
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <div class="card-footer">
+      <small class="fst-italic">source: <a href="https://developer.tugo.com/page/Travel_Safe_API">tugo</a> @ Canadian Embassy</small>
+    </div>
+  </div>  
+  {% endif %}
 
-
-
-    
+  {% if detailed.lawAndCulture.description or detailed.lawAndCulture.lawAndCultureInfo %}
+  <div class="card my-3">
+    <div class="card-header">Law and Culture</div>
+    {% if detailed.lawAndCulture.description %}
+      <div class="card-body">{{ detailed.lawAndCulture.description }}</div>
+    {% endif %}
+    {% if detailed.lawAndCulture.lawAndCultureInfo %}
+      <ul class="list-group list-group-flush">
+        {% for idx in detailed.lawAndCulture.lawAndCultureInfo %}
+          <li class="list-group-item">
+            <h5 class="card-title">{{ idx.category }}</h5>
+            <p>{{ idx.description }}</p>
+          </li>
+        {% endfor %}
+      </ul>
+    {% endif %}
+    <div class="card-footer">
+      <small class="fst-italic">source: <a href="https://developer.tugo.com/page/Travel_Safe_API">tugo</a> @ Canadian Embassy</small>
+    </div>
+  </div>
+  {% endif %}
+{% endif %}
