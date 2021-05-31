@@ -109,36 +109,40 @@
           </div>
         </div>
         <div class="col-8">
-          <canvas id="covidChart" class="img-responsive"></canvas>
-          <script>
-            let ctx = document.getElementById('covidChart').getContext('2d');
-            let covidChart = new Chart(ctx, {
-              type: 'line',
-              data: {
-                  labels: {{ graph['labels'] |tojson }},
-                  datasets: [{
-                      label: 'Total cases over 30 days',
-                      data: {{ graph['values'] |tojson }},
-                      borderColor: [
-                          'rgba(255, 99, 132, 1)',
-                      ],
-                      backgroundColor: [
-                          'rgba(255, 99, 132, 0.2)',
-                      ],
-                      borderWidth: 0.5
-                  }]
-              },
-              options: {
-                  scales: {
-                      yAxes: [{
-                          ticks: {
-                              beginAtZero: true
-                          }
-                      }]
-                  }
-              }
-            });
-          </script>
+          {% if graph.error %}
+            {{ graph.error }}
+          {% else %}
+            <canvas id="covidChart" class="img-responsive"></canvas>
+            <script>
+              let ctx = document.getElementById('covidChart').getContext('2d');
+              let covidChart = new Chart(ctx, {
+                type: 'line',
+                data: {
+                    labels: {{ graph['labels'] |tojson }},
+                    datasets: [{
+                        label: 'Total cases over 30 days',
+                        data: {{ graph['values'] |tojson }},
+                        borderColor: [
+                            'rgba(255, 99, 132, 1)',
+                        ],
+                        backgroundColor: [
+                            'rgba(255, 99, 132, 0.2)',
+                        ],
+                        borderWidth: 0.5
+                    }]
+                },
+                options: {
+                    scales: {
+                        yAxes: [{
+                            ticks: {
+                                beginAtZero: true
+                            }
+                        }]
+                    }
+                }
+              });
+            </script>
+          {% endif %}
         </div>
       
         <small class="fst-italic">[source: <a href="https://disease.sh">disease.sh</a>]</small>
