@@ -13,7 +13,7 @@ from forms import RegisterForm, LoginForm
 API_BASE_URL_TA = 'https://www.travel-advisory.info/api'
 API_BASE_URL_COVID = 'https://disease.sh/v3/covid-19'
 API_BASE_URL_TUGO = 'https://api.tugo.com/v1/travelsafe'
-API_SECRET_KEY_TUGO = os.environ.get('TUGO_SECRET_KEY')
+API_SECRET_KEY_TUGO = os.environ.get('API_SECRET_KEY_TUGO')
 CURR_USER_KEY = 'curr_user'
 
 app = Flask(__name__)
