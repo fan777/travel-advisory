@@ -152,7 +152,7 @@
         {{ detailed.error }}
       {% else %}
         <h4>Climate</h4>
-        {% if not detailed.climate.description or not detailed.climate.climateInfo %}
+        {% if not detailed.climate.description and not detailed.climate.climateInfo %}
           <p>No climate information.</p>
         {% else %}
           {% if detailed.climate.description %}

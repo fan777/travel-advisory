@@ -4,16 +4,19 @@ import requests_cache
 
 from flask import Flask, render_template, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
+from dotenv import load_dotenv
 from sqlalchemy.exc import IntegrityError
 from requests.exceptions import Timeout
 
 from models import db, connect_db, Country, Language, Currency, CountryCurrency, CountryLanguage, User
 from forms import RegisterForm, LoginForm
 
+load_dotenv()
+
 API_BASE_URL_TA = 'https://www.travel-advisory.info/api'
 API_BASE_URL_COVID = 'https://disease.sh/v3/covid-19'
 API_BASE_URL_TUGO = 'https://api.tugo.com/v1/travelsafe'
-API_SECRET_KEY_TUGO = os.environ.get('API_SECRET_KEY_TUGO')
+API_SECRET_KEY_TUGO = os.getenv('API_SECRET_KEY_TUGO')
 CURR_USER_KEY = 'curr_user'
 
 app = Flask(__name__)
