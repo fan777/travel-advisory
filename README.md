@@ -2,15 +2,22 @@
 
 Demo @ https://travel-advisory.herokuapp.com/
 
+---
+
 ## Table of Contents
 - [1. About The Project](#about-the-project)
 - [2. Objectives](#objectives)
 - [3. Getting Started](#getting-started)
   * [Prerequisites](#prerequisites)
+  * [Installation](#installation)
   * [Known Issues](#known-issues)
 - [4. Schema](#schema)
 - [5. User Flow](#user-flow)
+- [6. Data](#data)
+- [7. Additional Resources](#additional-resources)
+- [8. Future Considerations](#future-considerations)
 
+---
 
 ## About The Project
 
@@ -22,13 +29,18 @@ Global travel is not without perils.  This project aggregates data from a variet
 * Allows an authenticated visitor to bookmark countries
 
 ## Getting Started
-* Prerequisites
 
-* 
-
-## Known Issues
-
-* The APIs used may occasionaly be down or slow response may trigger timeout
+  * ### Prerequisites
+    * Postgresql installation
+    * Python 3.8.5
+    * Create an account with [Tugo](https://developer.tugo.com/) to register for a free API Key
+  * ### Installation
+    * Clone the repository
+    * Create empty database 'travel' and run seed.py
+    * Set up venv and install dependencies from requirements.txt
+  * ### Known Issues
+    * The APIs used may occasionally go down or have such slow response triggering a timeout
+    * The APIs used may not have data for all countries
 
 ## Schema
 
@@ -46,4 +58,19 @@ Global travel is not without perils.  This project aggregates data from a variet
 5. A user may create an account or login with an existing account.
 6. A valid account will present options to bookmark countries and show those countries on the entry homepage.
 
-# 
+## Data
+
+* [Tugo](https://developer.tugo.com/) - Travel Safe API
+* [Travel-Advisory.info](https://www.travel-advisory.info/) - Advisory levels API
+* [disease.sh](https://disease.sh/) - COVID data and historical counts
+* [restcountries.eu](http://restcountries.eu/) - Global country list and basic data
+
+## Additional Resources
+
+* [Chart.js](https://www.chartjs.org/) - Generate graphs from data
+* [Boostrap 5.0](https://getbootstrap.com/) - Layout and design
+* [Font Awesome](https://fontawesome.com/) - Icons
+
+## Future Considerations
+
+Since this project relies on so many external APIs with limited or inconsistent behavior, it may be worthwhile exercise to scrape government sites (from US state department and CIA world factbook) to generate one's own set of data.
