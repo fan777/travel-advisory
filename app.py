@@ -36,7 +36,8 @@ def add_user_to_g():
 
 @app.before_request
 def add_countries_to_g():
-    g.countries = Country.query.filter(Country.region != '').all()
+    # g.countries = Country.query.filter(Country.region != '').all()
+    g.countries = Country.query.all()
 
 def do_login(user):
     """Log in user."""
@@ -100,10 +101,14 @@ def logout():
 @app.route('/')
 def homepage():
     '''Show homepage.'''
-    return render_template('countries/index.html')
+    return redirect('/country/list')
 
 ######################################################
 # Country pages
+
+@app.route('/country/list')
+def countries():
+    return render_template('country/list.html')
 
 @app.route('/country/<country_code>')
 def country(country_code):
@@ -112,7 +117,7 @@ def country(country_code):
     covid = get_covid_stats(country_code)
     graph = get_covid_graph_data(country_code)
     detailed = get_detailed_advisory(country_code)
-    return render_template('countries/single.html', country=country, advisory=advisory, covid=covid, graph=graph, detailed=detailed)
+    return render_template('country/single.html', country=country, advisory=advisory, covid=covid, graph=graph, detailed=detailed)
 
 @app.route('/country/unbookmark/<country_code>', methods=['POST'])
 def unbookmark(country_code):

@@ -29,7 +29,7 @@ def add_to_data_load(data):
         code = data.get('alpha2Code'),
         name = data.get('name'),
         capital = data.get('capital'),
-        region = data.get('region'),
+        region = data.get('region') or 'Unknown',
         subregion = data.get('subregion'),
         population = data.get('population'),
         flag = data.get('flag'),

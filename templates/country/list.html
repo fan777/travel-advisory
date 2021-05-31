@@ -9,7 +9,7 @@
           {% for column in g.user.bookmarks | sort(attribute='name') | slice(3) %}
           <div class="col-md">
             {% for country in column %}
-              <a href="country/{{ country.code }}">{{ country.name }}</a> <br />
+              <a href="/country/{{ country.code }}">{{ country.name }}</a> <br />
             {% endfor %}
           </div>
           {% endfor %}    
@@ -18,16 +18,15 @@
     </div>
   {% endif %}
 
-  {% for regions in g.countries | groupby('region', default='N/A') %}
+  {% for regions in g.countries | groupby('region') %}
   <div class="card my-3">
-    <div class="card-header">{{ regions.grouper }}</div>
     <div class="card-body">
-      
+      <h3 class="card-title">{{ regions.grouper }}</h3>
       <div class="row">
         {% for column in regions.list | sort(attribute='name') | slice(3) %}
           <div class="col-md">
             {% for country in column %}
-              <a href="country/{{ country.code }}">{{ country.name }}</a> <br />
+              <a href="/country/{{ country.code }}">{{ country.name }}</a> <br />
             {% endfor %}
           </div>
         {% endfor %}    
