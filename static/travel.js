@@ -12,7 +12,6 @@ window.onload = async function (e) {
   if (canvas) {
     const response = await axios.get(`${BASE_URL}/covid_data`);
     if (!response.data.error) {
-      alert('no error')
       let ctx = canvas.getContext('2d');
       let covidChart = new Chart(ctx, {
         type: 'line',
