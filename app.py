@@ -2,7 +2,7 @@ import os
 import requests
 import requests_cache
 
-from flask import Flask, render_template, request, flash, redirect, session, g
+from flask import Flask, render_template, jsonify, request, flash, redirect, session, g
 from flask_debugtoolbar import DebugToolbarExtension
 from sqlalchemy.exc import IntegrityError
 from requests.exceptions import Timeout
@@ -99,14 +99,13 @@ def homepage():
 @app.route('/country/<country_code>')
 def country(country_code):
     if not [country for country in g.countries if country.code == country_code]:
-      flash(f'{country_code} is an invalid country code', 'danger')
-      return redirect('/')
+        flash(f'{country_code} is an invalid country code', 'danger')
+        return redirect('/')
     country = Country.query.get(country_code)
     advisory = get_basic_advisory(country_code)
     covid = get_covid_stats(country_code)
-    graph = get_covid_graph_data(country_code)
     detailed = get_detailed_advisory(country_code)
-    return render_template('country/country.html', country=country, advisory=advisory, covid=covid, graph=graph, detailed=detailed)  
+    return render_template('country/country.html', country=country, advisory=advisory, covid=covid, detailed=detailed)  
 
 @app.route('/country/unbookmark/<country_code>', methods=['POST'])
 def unbookmark(country_code):
@@ -128,6 +127,10 @@ def bookmark(country_code):
     db.session.commit()
     return redirect(request.referrer)
 
+@app.route('/country/<country_code>/covid_data')
+def country_covid(country_code):
+    return jsonify(get_covid_graph_data(country_code))
+
 ######################################################
 # Additional routes
 
@@ -142,84 +145,84 @@ def page_not_found(e):
 def get_basic_advisory(country_code):
     url = f'{API_BASE_URL_TA}'
     try:
-      response = requests.get(url, timeout=5, params={'countrycode': country_code})
-      data = response.json().get('data').get(country_code).get('advisory')
-      return dict([
-        ('score', data.get('score')),
-        ('message', data.get('message')),
-        ('updated', data.get('updated')),
-        ('source', data.get('source'))
-      ])
+        response = requests.get(url, timeout=5, params={'countrycode': country_code})
+        data = response.json().get('data').get(country_code).get('advisory')
+        return dict([
+            ('score', data.get('score')),
+            ('message', data.get('message')),
+            ('updated', data.get('updated')),
+            ('source', data.get('source'))
+        ])
     except Timeout as ex:
-      return dict([
-        ('error', 'API service timed out.')
-      ])
+        return dict([
+            ('error', 'API service timed out.')
+        ])
     except:
-      return dict([
-        ('error', 'Advisory for this country not found.')
-      ])
+        return dict([
+            ('error', 'Advisory for this country not found.')
+        ])
 
 def get_covid_stats(country_code):
     url = f'{API_BASE_URL_COVID}/countries/{country_code}'
     try:
-      response = requests.get(url, timeout=10)
-      data = response.json()
-      if response.status_code == 404:
-        raise Exception()
-      return dict([
-        ('cases', data.get('cases')),
-        ('deaths', data.get('deaths')),
-        ('recovered', data.get('recovered')),
-        ('active', data.get('active')),
-        ('critical', data.get('critical'))
-      ])
+        response = requests.get(url, timeout=10)
+        data = response.json()
+        if response.status_code == 404:
+            raise Exception()
+        return dict([
+            ('cases', data.get('cases')),
+            ('deaths', data.get('deaths')),
+            ('recovered', data.get('recovered')),
+            ('active', data.get('active')),
+            ('critical', data.get('critical'))
+        ])
     except Timeout as ex:
-      return dict([
-        ('error', 'API service timed out.')
-      ])
+        return dict([
+            ('error', 'API service timed out.')
+        ])
     except:
-      return dict([
-        ('error', 'Statistics for this country not found.')
-      ])
+        return dict([
+            ('error', 'Statistics for this country not found.')
+        ])
 
-def get_covid_graph_data (country_code):
+def get_covid_graph_data(country_code):
     url = f'{API_BASE_URL_COVID}/historical/{country_code}?lastdays=182'
     try:
-      response = requests.get(url, timeout=10)
-      data = response.json()
-      if response.status_code == 404:
-        raise Exception()
-      values = data.get('timeline').get('cases').values()
-      keys = data.get('timeline').get('cases').keys()
-      return dict([
-        ('data', list(values)),
-        ('labels', list(keys))
-      ])
+        response = requests.get(url, timeout=10)
+        data = response.json()
+        if response.status_code == 404:
+            raise Exception()
+        values = data.get('timeline').get('cases').values()
+        keys = data.get('timeline').get('cases').keys()
+        return dict([
+            ('data', list(values)),
+            ('labels', list(keys))
+        ])
     except Timeout as ex:
-      return dict([
-        ('error', 'API service timed out.')
-      ])
+        return dict([
+            ('error', 'API service timed out.')
+        ])
     except:
-      return dict([
-        ('error', 'Graph data for this country could not be computed.')
-      ])
+        return dict([
+            ('error', 'Graph data for this country could not be computed.')
+        ])
 
 def get_detailed_advisory(country_code):
     url = f'{API_BASE_URL_TUGO}/countries/{country_code}'
     try:
-      headers = {'X-Auth-API-Key': API_SECRET_KEY_TUGO}
-      response = requests.get(url, headers=headers, timeout=10)
-      data = response.json()
-      return dict([
-        ('climate', data.get('climate')),
-        ('health', data.get('health')),
-        ('lawAndCulture', data.get('lawAndCulture'))
-      ])
+        headers = {'X-Auth-API-Key': API_SECRET_KEY_TUGO}
+        response = requests.get(url, headers=headers, timeout=10)
+        data = response.json()
+        return dict([
+            ('climate', data.get('climate')),
+            ('health', data.get('health')),
+            ('lawAndCulture', data.get('lawAndCulture'))
+        ])
     except Timeout as ex:
-      return dict([
-        ('error', 'API service timed out.')
-      ])
+        return dict([
+            ('error', 'API service timed out.')
+        ])
     except:
-      return dict([
-        ('error', 'Additional considerations for this country not found.')
-      ])
+        return dict([
+            ('error', 'Additional considerations for this country not found.')
+        ])

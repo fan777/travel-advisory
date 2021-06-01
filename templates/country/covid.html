@@ -6,40 +6,7 @@
     {% if covid.error %}
       {{ covid.error }}
     {% else %}
-      {% if graph.error %}
-        {{ graph.error }}
-      {% else %}
-        <canvas id="covidChart" class="img-responsive"></canvas>
-        <script>
-          let ctx = document.getElementById('covidChart').getContext('2d');
-          let covidChart = new Chart(ctx, {
-            type: 'line',
-            data: {
-                labels: {{ graph['labels'] |tojson }},
-                datasets: [{
-                    label: 'Total cases over ~6 months',
-                    data: {{ graph['data'] |tojson }},
-                    borderColor: [
-                        'rgba(255, 99, 132, 1)',
-                    ],
-                    backgroundColor: [
-                        'rgba(255, 99, 132, 0.2)',
-                    ],
-                    borderWidth: 0.5
-                }]
-            },
-            options: {
-                scales: {
-                    yAxes: [{
-                        ticks: {
-                            beginAtZero: true
-                        }
-                    }]
-                }
-            }
-          });
-        </script>
-      {% endif %}
+      <canvas id="covidChart" class="img-responsive"></canvas>
       <ul class="list-group list-group-flush mt-2">
         <li class="list-group-item">
           <div class="row">
